@@ -133,6 +133,12 @@ void QRDisplay::setQRCode(std::vector<qrcodegen::QrCode> &qr)
 
 	for (const qrcodegen::QrCode &code : qr)
 	{
+		if ( (offset_x + code.getSize()) > _displayImage->width() )
+		{
+			offset_x = 0;
+			offset_y += code.getSize() + spacing().height();
+		}
+
 		for(int y = 0; y < code.getSize(); y++)
 		{
 			for(int x = 0; x < code.getSize(); x++)
@@ -143,11 +149,6 @@ void QRDisplay::setQRCode(std::vector<qrcodegen::QrCode> &qr)
 		}
 
 		offset_x += code.getSize() + spacing().width();
-		if ( offset_x > _displayImage->width() )
-		{
-			offset_x = 0;
-			offset_y += code.getSize() + spacing().height();
-		}
 	}
 
 	repaint();

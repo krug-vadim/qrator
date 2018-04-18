@@ -29,11 +29,26 @@ void MainWindow::generateQRCode()
 	QString qrText = ui->qrText->document()->toPlainText();
 
 	std::vector<QrCode> qr;
-	for(int pos = 0; pos < qrText.size(); pos += n)
+
+	if ( ui->splitByLineChechBox->isChecked() )
 	{
-		QString chunk = qrText.mid(pos, n);
-		qDebug() << chunk;
-		qr.push_back( QrCode::encodeText(chunk.toUtf8().constData(), QrCode::Ecc::HIGH) );
+		QStringList strings = qrText.split("\n");
+		for(const QString &chunk:strings)
+		{
+			if ( chunk.isEmpty() )
+				continue;
+			qDebug() << chunk;
+			qr.push_back( QrCode::encodeText(chunk.toUtf8().constData(), QrCode::Ecc::HIGH) );
+		}
+	}
+	else
+	{
+		for(int pos = 0; pos < qrText.size(); pos += n)
+		{
+			QString chunk = qrText.mid(pos, n);
+			qDebug() << chunk;
+			qr.push_back( QrCode::encodeText(chunk.toUtf8().constData(), QrCode::Ecc::HIGH) );
+		}
 	}
 
 	ui->widget->setQRCode(qr);
